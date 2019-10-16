@@ -6,7 +6,7 @@ type Config struct {
 	DatabaseURL string `toml:"database_url"`
 }
 
-func git NewConfig() *Config {
+func NewConfig() *Config {
 	return &Config{
 		BindAddr: ":8082",
 		LogLeval: "debug",
