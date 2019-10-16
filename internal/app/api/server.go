@@ -34,6 +34,7 @@ func NewServer() *server {
 	s := &server{
 		router: chi.NewRouter(),
 		logger: logrus.New(),
+		config: NewConfig(),
 	}
 
 	s.configRouter()
@@ -47,7 +48,8 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) configRouter() {
 	router := s.router
-	basePath := s.config.BindAddr
+	conf := s.config
+	basePath := conf.BindAddr
 
 	router.Route(basePath, func(scope chi.Router) {
 		// public routers
