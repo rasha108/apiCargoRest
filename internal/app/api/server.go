@@ -49,8 +49,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *server) configRouter() {
 	router := s.router
 	conf := s.config
-	basePath := conf.BindAddr
-
+	basePath := conf.BasePath
 	router.Route(basePath, func(scope chi.Router) {
 		// public routers
 		scope.Group(func(public chi.Router) {
