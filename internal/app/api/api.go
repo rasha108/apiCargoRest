@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/store/sqlstore"
 
-	_ "github.com/jackc/pgx/v4"
+	_ "github.com/lib/pq"
 )
 
 func Start(config *Config) error {

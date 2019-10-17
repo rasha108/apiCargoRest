@@ -2,9 +2,10 @@
 -- +migrate StatementBegin
 
 -- object: index_users_email
-CREATE UNIQUE INDEX index_users_email ON public.create_users (lower(email))
+CREATE UNIQUE INDEX index_users_email ON public.create_users (lower(email));
 -- ddl-end --
 -- +migrate StatementEnd
+
 
 -- +migrate Down
 -- +migrate StatementBegin
