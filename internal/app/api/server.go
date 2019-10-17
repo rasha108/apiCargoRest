@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	sessionName = "goopherschool"
+	sessionName = "gopherschool"
 )
 
 var (
-	errIncorrectEmailOrPassword = errors.New("incorret email or password")
+	errIncorrectEmailOrPassword = errors.New("Incorrect email or password")
 )
 
 type server struct {
@@ -30,11 +30,13 @@ type server struct {
 	sessionStore sessions.Store
 }
 
-func NewServer() *server {
+func NewServer(store store.Store, sessionStore sessions.Store) *server {
 	s := &server{
-		router: chi.NewRouter(),
-		logger: logrus.New(),
-		config: NewConfig(),
+		router:       chi.NewRouter(),
+		logger:       logrus.New(),
+		config:       NewConfig(),
+		store:        store,
+		sessionStore: sessionStore,
 	}
 
 	s.configRouter()
