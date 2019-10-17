@@ -1,9 +1,9 @@
 -- +migrate Up
 -- +migrate StatementBegin
 
--- object: public.create_users | type: TABLE --
--- DROP TABLE IF EXISTS public.create_users CASCADE;
-CREATE TABLE public.create_users (
+-- object: public.users | type: TABLE --
+-- DROP TABLE IF EXISTS public.users CASCADE;
+CREATE TABLE public.users (
 	id bigserial NOT NULL,
 	first_name varchar(64),
 	last_name varchar(128),
@@ -18,5 +18,5 @@ CREATE TABLE public.create_users (
 
 -- +migrate Down
 -- +migrate StatementBegin
-DROP TABLE public.create_users;
+DROP TABLE public.users;
 -- +migrate StatementEnd
