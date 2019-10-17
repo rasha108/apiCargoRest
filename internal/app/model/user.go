@@ -23,7 +23,7 @@ func (u *User) BeforeCreate() error {
 }
 
 func (u *User) ComparePassword(password string) bool {
-	return bcrypt.CompareHashAndPassword([]byte(password), []byte(u.EncryptPassword)) == nil
+	return bcrypt.CompareHashAndPassword([]byte(u.EncryptPassword), []byte(password)) == nil
 }
 
 func encryptString(password string) (string, error) {
