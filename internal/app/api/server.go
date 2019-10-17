@@ -62,21 +62,11 @@ func (s *server) configRouter() {
 }
 
 func (s *server) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"email"`
-	}
+	u := &model.User{}
 
-	req := request{}
-
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(u); err != nil {
 		s.error(w, r, http.StatusBadRequest, err)
 		return
-	}
-
-	u := &model.User{
-		Email:    req.Email,
-		Password: req.Password,
 	}
 
 	if err := s.store.User().Create(u); err != nil {
@@ -89,12 +79,7 @@ func (s *server) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) HandleSessionsCreate(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
-	req := request{}
+	req := &model.User{}
 
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		s.error(w, r, http.StatusBadRequest, err)
