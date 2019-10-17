@@ -22,6 +22,11 @@ func (u *User) BeforeCreate() error {
 	return nil
 }
 
+func (u *User) ComparePassword(password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(password), []byte(u.EncryptPassword)) == nil
+
+}
+
 func encryptString(password string) (string, error) {
 	b, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
 	if err != nil {

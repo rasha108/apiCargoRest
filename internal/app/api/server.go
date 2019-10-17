@@ -102,7 +102,7 @@ func (s *server) HandleSessionsCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u, err := s.store.User().FindByEmail(req.Email)
-	if err != nil {
+	if err != nil || !u.ComparePassword(req.Password) {
 		s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
 		return
 	}
