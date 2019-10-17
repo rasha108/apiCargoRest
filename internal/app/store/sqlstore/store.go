@@ -1,17 +1,17 @@
 package sqlstore
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/rasha108/apiCargoRest.git/internal/app/store"
 )
 
 type Store struct {
-	db             *sql.DB
+	db             *sqlx.DB
 	userRepository *UserRepository
 }
 
-func New(db *sql.DB) *Store {
+func New(db *sqlx.DB) *Store {
 	return &Store{
 		db: db,
 	}

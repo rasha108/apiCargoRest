@@ -1,13 +1,14 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/store/sqlstore"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx"
 )
 
 func Start(config *Config) error {
@@ -25,8 +26,8 @@ func Start(config *Config) error {
 	return http.ListenAndServe(config.BindAddr, srv)
 }
 
-func newDB(databaseURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", databaseURL)
+func newDB(databaseURL string) (*sqlx.DB, error) {
+	db, err := sqlx.Connect("postgres", databaseURL)
 	if err != nil {
 		return nil, err
 	}

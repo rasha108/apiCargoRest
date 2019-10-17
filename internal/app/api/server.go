@@ -5,12 +5,10 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-chi/chi"
+	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/model"
 	"github.com/rasha108/apiCargoRest.git/internal/app/store"
-
-	"github.com/gorilla/sessions"
-
-	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
 )
 
