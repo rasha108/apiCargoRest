@@ -4,11 +4,10 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/store/sqlstore"
 
-	_ "github.com/jackc/pgx"
+	_ "github.com/jackc/pgx/v4"
 )
 
 func Start(config *Config) error {
