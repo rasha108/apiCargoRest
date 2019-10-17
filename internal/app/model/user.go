@@ -3,10 +3,10 @@ package model
 import "golang.org/x/crypto/bcrypt"
 
 type User struct {
-	ID              int    `json:"id"`
-	Email           string `json:"email"`
-	Password        string `json:"password, omitempty"`
-	EncryptPassword string `json:"-"`
+	ID              int    `json:"id" db:"id"`
+	Email           string `json:"email" db:"email"`
+	Password        string `json:"password, omitempty" db:"-"`
+	EncryptPassword string `json:"-" db:"encrypted_password"`
 }
 
 func (u *User) BeforeCreate() error {

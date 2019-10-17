@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"errors"
 
 	"github.com/rasha108/apiCargoRest.git/internal/app/model"
@@ -26,17 +27,14 @@ func (r *UserRepository) Create(u *model.User) error {
 
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	u := &model.User{}
-	if err := r.store.db.QueryRow(
-		"SELECT id, email, encrypted_password FROM public.create_users where email = $1",
-		email,
-	).Scan(
-		&u.ID,
-		&u.Email,
-		&u.EncryptPassword,
-	); err != nil {
+
+	findStatement := `"SELECT id, email, encrypted_password FROM public.create_users where email = lower($1)"`
+
+	if err := r.store.db.Get(u, findStatement); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("record not found")
 		}
+		return nil, err
 	}
 
 	return u, nil
