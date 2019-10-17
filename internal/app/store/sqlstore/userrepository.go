@@ -2,7 +2,6 @@ package sqlstore
 
 import (
 	"database/sql"
-	"github.com/jmoiron/sqlx"
 	"errors"
 
 	"github.com/rasha108/apiCargoRest.git/internal/app/model"
