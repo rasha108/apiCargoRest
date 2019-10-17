@@ -69,6 +69,7 @@ func (s *server) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		s.error(w, r, http.StatusBadRequest, err)
+		return
 	}
 
 	u := &model.User{
@@ -78,6 +79,7 @@ func (s *server) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	if err := s.store.User().Create(u); err != nil {
 		s.error(w, r, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	u.Saintize()
@@ -87,18 +89,20 @@ func (s *server) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
 func (s *server) HandleSessionsCreate(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email    string `json:"email"`
-		Password string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	req := request{}
 
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		s.error(w, r, http.StatusBadRequest, err)
+		return
 	}
 
 	u, err := s.store.User().FindByEmail(req.Email)
 	if err != nil {
 		s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
+		return
 	}
 
 	session, err := s.sessionStore.Get(r, sessionName)
@@ -116,6 +120,9 @@ func (s *server) HandleSessionsCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
+	// Записываем оишбку в лог
+	s.logger.Fatal(err)
+	// Вывод ошибки
 	s.respond(w, r, code, map[string]string{"error": err.Error()})
 }
 

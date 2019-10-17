@@ -10,6 +10,7 @@ CREATE TABLE public.create_users (
 	email varchar(128) NOT NULL,
 	encrypted_password varchar NOT NULL,
 	CONSTRAINT first_name_last_name_uq_idx UNIQUE (first_name, last_name),
+    CONSTRAINT email_uq_idx UNIQUE (email),
 	CONSTRAINT create_users_pk PRIMARY KEY (id)
 );
 -- ddl-end --
