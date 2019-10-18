@@ -28,7 +28,7 @@ func (r *UserRepository) Create(u *model.User) error {
 func (r *UserRepository) Find(id int) (*model.User, error) {
 	u := &model.User{}
 
-	findStatement := `"SELECT id, email, encrypted_password FROM public.users where id = $1"`
+	findStatement := `SELECT id, email, encrypted_password FROM public.users WHERE id = $1`
 
 	if err := r.store.db.Get(u, findStatement, id); err != nil {
 		if err == sql.ErrNoRows {
@@ -44,7 +44,7 @@ func (r *UserRepository) Find(id int) (*model.User, error) {
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	u := &model.User{}
 
-	findStatement := `"SELECT id, email, encrypted_password FROM public.users where email = lower($1)"`
+	findStatement := `SELECT id, email, encrypted_password FROM public.users WHERE email = lower($1)`
 
 	if err := r.store.db.Get(u, findStatement, email); err != nil {
 		if err == sql.ErrNoRows {

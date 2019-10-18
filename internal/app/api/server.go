@@ -66,7 +66,7 @@ func (s *server) configRouter() {
 		scope.Group(func(public chi.Router) {
 			public.Post("/users", s.HandleUserCreate)
 			public.Post("/sessions", s.HandleSessionsCreate)
-
+			// private routers
 			scope.Group(func(private chi.Router) {
 				private.Route("/private", func(r chi.Router) {
 					private.Use(s.authenticatedUser)
@@ -77,33 +77,12 @@ func (s *server) configRouter() {
 	})
 }
 
-func (s *server) handleWhoami(w http.ResponseWriter, r *http.Request) {
-	s.respond(w, r, http.StatusOK, r.Context().Value(cxtKeyUser).(*model.User))
-}
-
-func (s *server) authenticatedUser(next http.Handler) http.Handler {
+func (s *server) setRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := s.sessionStore.Get(r, sessionName)
-		if err != nil {
-			s.error(w, r, http.StatusInternalServerError, err)
-			return
-		}
-
-		id, ok := session.Values["user_id"]
-		if !ok {
-			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
-			return
-		}
-
-		u, err := s.store.User().Find(id.(int))
-		if err != nil {
-			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
-			return
-		}
-
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), cxtKeyUser, u)))
+		id := uuid.New().String()
+		w.Header().Set("X-Request-ID", id)
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), cxtKeyRequestID, id)))
 	})
-
 }
 
 func (s *server) logRequest(next http.Handler) http.Handler {
@@ -125,14 +104,6 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 			http.StatusText(rw.code),
 			time.Now().Sub(start),
 		)
-	})
-}
-
-func (s *server) setRequestID(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := uuid.New().String()
-		w.Header().Set("X-Request-ID", id)
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), cxtKeyRequestID, id)))
 	})
 }
 
@@ -180,6 +151,34 @@ func (s *server) HandleSessionsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.respond(w, r, http.StatusOK, nil)
+}
+
+func (s *server) authenticatedUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := s.sessionStore.Get(r, sessionName)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+
+		id, ok := session.Values["user_id"]
+		if !ok {
+			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			return
+		}
+
+		u, err := s.store.User().Find(id.(int))
+		if err != nil {
+			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			return
+		}
+
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), cxtKeyUser, u)))
+	})
+}
+
+func (s *server) handleWhoami(w http.ResponseWriter, r *http.Request) {
+	s.respond(w, r, http.StatusOK, r.Context().Value(cxtKeyUser).(*model.User))
 }
 
 func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {

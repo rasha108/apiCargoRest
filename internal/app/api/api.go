@@ -26,12 +26,9 @@ func Start(config *Config) error {
 }
 
 func newDB(databaseURL string) (*sqlx.DB, error) {
+	//Connect внутри себя вызывает ping
 	db, err := sqlx.Connect("postgres", databaseURL)
 	if err != nil {
-		return nil, err
-	}
-
-	if err := db.Ping(); err != nil {
 		return nil, err
 	}
 
