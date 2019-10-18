@@ -70,10 +70,15 @@ func (s *server) configRouter() {
 			scope.Group(func(private chi.Router) {
 				private.Route("/private", func(r chi.Router) {
 					private.Use(s.authenticatedUser)
+					private.Get("/whoami", s.handleWhoami)
 				})
 			})
 		})
 	})
+}
+
+func (s *server) handleWhoami(w http.ResponseWriter, r *http.Request) {
+	s.respond(w, r, http.StatusOK, r.Context().Value(cxtKeyUser).(*model.User))
 }
 
 func (s *server) authenticatedUser(next http.Handler) http.Handler {
