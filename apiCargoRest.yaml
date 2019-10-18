@@ -1,0 +1,8 @@
+apiCargoRest_db:
+    dialect: postgres
+    datasource: host=localhost port=5432 dbname=apiCargoRest user=rasha password= sslmode=disable
+    dir: /home/rasha/restapi/apiCargoRest/migrations
+    table: migrations
+
+#Библиотека sql-mirate
+#Команда ~/go/bin/sql-migrate up -config=/home/rasha/test_db/apiCargoRest.yaml -env="apiCargoRest_db"
