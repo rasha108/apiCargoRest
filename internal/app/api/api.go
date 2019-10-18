@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/gorilla/sessions"
+	"github.com/jmoiron/sqlx"
 	"github.com/rasha108/apiCargoRest.git/internal/app/store/sqlstore"
 
 	_ "github.com/lib/pq"
