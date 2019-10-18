@@ -3,6 +3,12 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
+
+	"github.com/gorilla/sessions"
+	"github.com/rasha108/apiCargoRest.git/internal/app/store/sqlstore"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/BurntSushi/toml"
 	"github.com/rasha108/apiCargoRest.git/internal/app/api"
@@ -25,7 +31,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := api.Start(config); err != nil {
+	db, err := sqlx.Connect("postgres", config.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	defer db.Close()
+
+	store := sqlstore.New(db)
+	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
+	srv := api.NewServer(store, sessionStore)
+
+	err = http.ListenAndServe(config.BindAddr, srv)
+	if err != nil {
 		log.Fatal(err)
 	}
 }

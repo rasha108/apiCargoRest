@@ -79,7 +79,6 @@ func TestUser_Validate(t *testing.T) {
 			} else {
 				assert.Error(t, tc.u().Validate())
 			}
-
 		})
 	}
 }
