@@ -15,6 +15,7 @@ require (
 	github.com/kr/pty v1.1.8 // indirect
 	github.com/lib/pq v1.2.0
 	github.com/sirupsen/logrus v1.4.2
+	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.3.0
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550

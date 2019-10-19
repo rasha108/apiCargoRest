@@ -11,8 +11,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
+	"github.com/rasha108/apiCargoRest.git/internal/app/db"
 	"github.com/rasha108/apiCargoRest.git/internal/app/model"
-	"github.com/rasha108/apiCargoRest.git/internal/app/store"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,11 +33,11 @@ type server struct {
 	router       *chi.Mux
 	logger       *logrus.Logger
 	config       *Config
-	store        store.Store
+	store        db.Store
 	sessionStore sessions.Store
 }
 
-func NewServer(store store.Store, sessionStore sessions.Store) *server {
+func NewServer(store db.Store, sessionStore sessions.Store) *server {
 	s := &server{
 		router:       chi.NewRouter(),
 		logger:       logrus.New(),

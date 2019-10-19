@@ -1,4 +1,4 @@
-package store
+package db
 
 import "github.com/rasha108/apiCargoRest.git/internal/app/model"
 

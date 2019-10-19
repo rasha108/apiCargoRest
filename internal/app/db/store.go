@@ -1,4 +1,4 @@
-package store
+package db
 
 // Store ...
 type Store interface {

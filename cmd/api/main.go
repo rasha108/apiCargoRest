@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
-	"github.com/rasha108/apiCargoRest.git/internal/app/store/sqlstore"
+	"github.com/rasha108/apiCargoRest.git/internal/app/db/sqlstore"
 
 	"github.com/jmoiron/sqlx"
 
