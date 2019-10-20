@@ -5,6 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/sirupsen/logrus"
+
+	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitclient"
+
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/db/sqlstore"
 
@@ -24,6 +28,7 @@ func init() {
 
 func main() {
 	flag.Parse()
+	logger := logrus.Logger{}
 
 	config := api.NewConfig()
 	_, err := toml.DecodeFile(configPath, config)
@@ -33,7 +38,7 @@ func main() {
 
 	db, err := sqlx.Connect("postgres", config.DatabaseURL)
 	if err != nil {
-		log.Fatal(err)
+		logger.WithError(err).Error("db connect failed")
 		return
 	}
 
@@ -41,10 +46,18 @@ func main() {
 
 	store := sqlstore.New(db)
 	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
-	srv := api.NewServer(store, sessionStore)
+
+	mailServer, err := rabbitclient.NewConnection(config.MailConfig)
+	if err != nil {
+		logger.WithError(err).Error("create mail client failed")
+		return
+	}
+
+	srv := api.NewServer(store, sessionStore, mailServer)
 
 	err = http.ListenAndServe(config.BindAddr, srv)
 	if err != nil {
-		log.Fatal(err)
+		logger.WithError(err).Error("application aborted")
+		return
 	}
 }

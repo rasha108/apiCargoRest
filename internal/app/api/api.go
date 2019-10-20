@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitclient"
+
 	"github.com/google/uuid"
 
 	"github.com/go-chi/chi"
@@ -35,15 +37,17 @@ type server struct {
 	config       *Config
 	store        db.Store
 	sessionStore sessions.Store
+	mailConnect  *rabbitclient.Connection
 }
 
-func NewServer(store db.Store, sessionStore sessions.Store) *server {
+func NewServer(store db.Store, sessionStore sessions.Store, mailConnect *rabbitclient.Connection) *server {
 	s := &server{
 		router:       chi.NewRouter(),
 		logger:       logrus.New(),
 		config:       NewConfig(),
 		store:        store,
 		sessionStore: sessionStore,
+		mailConnect:  mailConnect,
 	}
 
 	s.configRouter()

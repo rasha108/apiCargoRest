@@ -2,11 +2,11 @@ package rabbitclient
 
 // Config stores rabbitmq connection parameters for mail-server
 type Config struct {
-	Host      string `yaml:"host,omitempty"`
-	Port      int    `yaml:"port,omitempty"`
-	UserName  string `yaml:"username,omitempty"`
-	Password  string `yaml:"password,omitempty"`
-	SendQueue string `yaml:"send_queue,omitempty"`
+	Host      string `toml:"host"`
+	Port      int    `toml:"port"`
+	UserName  string `toml:"username"`
+	Password  string `toml:"password"`
+	SendQueue string `toml:"send_queue"`
 }
 
 // setDefault is method for adding fedault field values

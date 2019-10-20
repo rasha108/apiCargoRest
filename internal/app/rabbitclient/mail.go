@@ -2,6 +2,7 @@ package rabbitclient
 
 import "net/mail"
 
+//
 type Mail struct {
 	From        *mail.Address   `json:"from,omitempty"`
 	To          []*mail.Address `json:"to,omitempty"`
