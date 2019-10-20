@@ -3,34 +3,9 @@ package rabbitclient
 import (
 	"encoding/json"
 	"fmt"
-	"net/mail"
 
 	"github.com/streadway/amqp"
 )
-
-type Mail struct {
-	From        *mail.Address   `json:"from,omitempty"`
-	To          []*mail.Address `json:"to,omitempty"`
-	Cc          []*mail.Address `json:"cc,omitempty"`
-	Bcc         []*mail.Address `json:"bcc,omitempty"`
-	Subject     string          `json:"subject,omitempty"`
-	Text        string          `json:"text,omitempty"`
-	Attachments []Attachment    `json:"attachments,omitempty"`
-}
-
-type Attachment struct {
-	Name    string `json:"name,omitempty"`    // File name
-	Content string `json:"content,omitempty"` // Base64 encoded []byte
-}
-
-// Config stores rabbitmq connection parameters for mail-server
-type Config struct {
-	Host      string `yaml:"host,omitempty"`
-	Port      int    `yaml:"port,omitempty"`
-	UserName  string `yaml:"username,omitempty"`
-	Password  string `yaml:"password,omitempty"`
-	SendQueue string `yaml:"send_queue,omitempty"`
-}
 
 // Connection is store for rabbitmq conncetions
 type Connection struct {
