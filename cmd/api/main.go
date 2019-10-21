@@ -52,20 +52,26 @@ func main() {
 	defer func() {
 		dbErr := db.Disconnect(connHandler, logger)
 		if dbErr != nil {
-			logger.WithError(err).Error("db disconncet failed")
+			logger.WithError(dbErr).Error("db disconncet failed")
 		}
 	}()
 
 	store := sqlstore.New(connHandler)
 	sessionStore := sessions.NewCookieStore([]byte(conf.SessionKey))
-
-	mailServer, err := rabbitclient.NewConnection(conf.MailConfig)
+	rabbitServer, err := rabbitclient.NewConnection(conf.MailConfig)
 	if err != nil {
 		logger.WithError(err).Error("create mail client failed")
 		return
 	}
 
-	srv := api.NewServer(store, sessionStore, conf, mailServer)
+	defer func() {
+		err := rabbitServer.Close()
+		if err != nil {
+			logger.WithError(err).Error("rabbitmq disconnect failed")
+		}
+	}()
+
+	srv := api.NewServer(store, sessionStore, conf, rabbitServer)
 	err = http.ListenAndServe(conf.BindAddr, srv)
 	if err != nil {
 		logger.WithError(err).Error("application aborted")
