@@ -72,7 +72,9 @@ func main() {
 	}()
 
 	srv := api.NewServer(store, sessionStore, conf, rabbitServer)
-	err = http.ListenAndServe(conf.APIConfig.Bind, srv)
+
+	bind := conf.APIConfig.Bind
+	err = http.ListenAndServe(bind, srv)
 	if err != nil {
 		logger.WithError(err).Error("application aborted")
 		return

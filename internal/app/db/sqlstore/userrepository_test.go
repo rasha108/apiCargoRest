@@ -24,8 +24,9 @@ func TestUserRepository_Find(t *testing.T) {
 
 	s := New(db)
 	u := model.TestUser(t)
-	s.User().Create(u)
-	u, err := s.User().Find(u.ID)
+	err := s.User().Create(u)
+	assert.NoError(t, err)
+	u, err = s.User().Find(u.ID)
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 }
@@ -36,8 +37,9 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 
 	s := New(db)
 	u := model.TestUser(t)
-	s.User().Create(u)
-	u, err := s.User().FindByEmail(u.Email)
+	err := s.User().Create(u)
+	assert.NoError(t, err)
+	u, err = s.User().FindByEmail(u.Email)
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 }

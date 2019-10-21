@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/db"
 	"github.com/rasha108/apiCargoRest.git/internal/app/model"
-	"github.com/sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
 )
 
 const (
@@ -33,7 +33,7 @@ var (
 
 type server struct {
 	router       *chi.Mux
-	logger       *logrus.Logger
+	logger       *logger.Logger
 	config       *Config
 	store        db.Store
 	sessionStore sessions.Store
@@ -43,7 +43,7 @@ type server struct {
 func NewServer(store db.Store, sessionStore sessions.Store, config *Config, mqConnection *rabbitmq.Connection) *server {
 	s := &server{
 		router:       chi.NewRouter(),
-		logger:       logrus.New(),
+		logger:       logger.New(),
 		config:       config,
 		store:        store,
 		sessionStore: sessionStore,
@@ -70,11 +70,16 @@ func (s *server) configRouter() {
 		scope.Group(func(public chi.Router) {
 			public.Post("/users", s.HandleUserCreate)
 			public.Post("/sessions", s.HandleSessionsCreate)
+
+			public.Route("/organization", func(send chi.Router) {
+				send.Get("/sendToEmail", s.HandleSendEmail)
+			})
+
 			// private routers
 			scope.Group(func(private chi.Router) {
 				private.Route("/private", func(r chi.Router) {
 					private.Use(s.authenticatedUser)
-					private.Get("/whoami", s.handleWhoami)
+					private.Get("/whoami", s.HandleWhoami)
 				})
 			})
 		})
@@ -91,7 +96,7 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 
 func (s *server) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger := s.logger.WithFields(logrus.Fields{
+		logger := s.logger.WithFields(logger.Fields{
 			"remote_addr": r.RemoteAddr,
 			"request_id":  r.Context().Value(cxtKeyRequestID),
 		})
@@ -120,6 +125,9 @@ func (s *server) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.store.User().Create(u); err != nil {
+		logger.
+			WithError(err).
+			Error("sql failed users")
 		s.error(w, r, http.StatusUnprocessableEntity, err)
 		return
 	}
@@ -139,6 +147,9 @@ func (s *server) HandleSessionsCreate(w http.ResponseWriter, r *http.Request) {
 
 	u, err := s.store.User().FindByEmail(req.Email)
 	if err != nil || !u.ComparePassword(req.Password) {
+		logger.
+			WithError(err).
+			Error("sql failed users")
 		s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
 		return
 	}
@@ -173,6 +184,9 @@ func (s *server) authenticatedUser(next http.Handler) http.Handler {
 
 		u, err := s.store.User().Find(id.(int))
 		if err != nil {
+			logger.
+				WithError(err).
+				Error("sql failed organizations")
 			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
 			return
 		}
@@ -181,8 +195,43 @@ func (s *server) authenticatedUser(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) handleWhoami(w http.ResponseWriter, r *http.Request) {
+func (s *server) HandleWhoami(w http.ResponseWriter, r *http.Request) {
 	s.respond(w, r, http.StatusOK, r.Context().Value(cxtKeyUser).(*model.User))
+}
+
+func (s *server) HandleSendEmail(w http.ResponseWriter, r *http.Request) {
+	rabbitMQ := s.mqConnection
+
+	id := uuid.MustParse("12312312321")
+	organizations, err := s.store.User().Organizations(id)
+	if err != nil {
+		logger.
+			WithError(err).
+			Error("sql failed organizations")
+		s.error(w, r, http.StatusBadRequest, err)
+		return
+	}
+
+	To := []string{"rashid1995bik@mail.ru"}
+	mail, err := rabbitmq.NewSimpleMail("rashid1995bik@mail.ru", To, "123", "nananananannan")
+	if err != nil {
+		logger.
+			WithError(err).
+			Error("sql failed organizations")
+		s.error(w, r, http.StatusBadRequest, err)
+		return
+	}
+
+	err = rabbitMQ.Send(mail)
+	if err != nil {
+		logger.
+			WithError(err).
+			Error("sql failed organizations")
+		s.error(w, r, http.StatusBadRequest, err)
+		return
+	}
+
+	s.respond(w, r, http.StatusOK, organizations)
 }
 
 func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
