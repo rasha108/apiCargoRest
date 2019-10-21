@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitclient"
+	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitmq"
 
 	"github.com/google/uuid"
 
@@ -37,10 +37,10 @@ type server struct {
 	config       *Config
 	store        db.Store
 	sessionStore sessions.Store
-	mqConnection *rabbitclient.Connection
+	mqConnection *rabbitmq.Connection
 }
 
-func NewServer(store db.Store, sessionStore sessions.Store, config *Config, mqConnection *rabbitclient.Connection) *server {
+func NewServer(store db.Store, sessionStore sessions.Store, config *Config, mqConnection *rabbitmq.Connection) *server {
 	s := &server{
 		router:       chi.NewRouter(),
 		logger:       logrus.New(),

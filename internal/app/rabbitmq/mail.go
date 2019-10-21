@@ -1,4 +1,4 @@
-package rabbitclient
+package rabbitmq
 
 import "net/mail"
 

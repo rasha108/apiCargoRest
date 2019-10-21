@@ -1,4 +1,4 @@
-package rabbitclient
+package rabbitmq
 
 // Config stores rabbitmq connection parameters for mail-server
 type Config struct {

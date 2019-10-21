@@ -8,7 +8,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitclient"
+	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitmq"
 
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/db/sqlstore"
@@ -58,7 +58,7 @@ func main() {
 
 	store := sqlstore.New(connHandler)
 	sessionStore := sessions.NewCookieStore([]byte(conf.SessionKey))
-	rabbitServer, err := rabbitclient.NewConnection(conf.MailConfig)
+	rabbitServer, err := rabbitmq.NewConnection(conf.MailConfig)
 	if err != nil {
 		logger.WithError(err).Error("create mail client failed")
 		return

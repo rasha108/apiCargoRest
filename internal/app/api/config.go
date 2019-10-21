@@ -4,16 +4,16 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitclient"
+	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitmq"
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	LogLeval   string              `yaml:"log_level"`
-	SessionKey string              `yaml:"session_key"`
-	APIConfig  APIConfig           `yaml:"api"`
-	MailConfig rabbitclient.Config `yaml:"mail"`
-	DbConfig   DbConfig            `yaml:"db"`
+	LogLeval   string          `yaml:"log_level"`
+	SessionKey string          `yaml:"session_key"`
+	APIConfig  APIConfig       `yaml:"api"`
+	MailConfig rabbitmq.Config `yaml:"mail"`
+	DbConfig   DbConfig        `yaml:"db"`
 }
 
 // APIConfig stores api parameters
