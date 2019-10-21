@@ -5,12 +5,10 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
-)
 
-//
-//   Пока нигде не использовал, хочу заюзать
-//
-//
+	// load PostgreSQL driver
+	_ "gopkg.in/jackc/pgx.v3/stdlib"
+)
 
 const (
 	// ConnectionType a driver name in connection args
@@ -42,19 +40,13 @@ func NewConnectParams(host, user, pass, dbName string, port, maxConnections int)
 // Connect creates database connection
 // returns wrapper connection type
 func Connect(params *ConnectParams, logger logrus.Logger) (*sqlx.DB, error) {
-	DSNtpl := "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s"
+	DSNtpl := "host=%s dbname=%s sslmode=disable"
 	DSN := fmt.Sprintf(DSNtpl,
 		params.host,
-		params.port,
-		params.user,
-		params.pass,
 		params.dbName,
 	)
-
-	logger.Tracef("connecting: host=%s pord=%d user=%s dbname=%s",
+	logger.Tracef("connecting: host=%s dbname=%s",
 		params.host,
-		params.port,
-		params.user,
 		params.dbName,
 	)
 	connectionType := ConnectionType

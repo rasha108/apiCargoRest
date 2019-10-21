@@ -1,9 +1,8 @@
-# Хочу заменить на него
-
 bind_addr: ":8084"
 log_level: "debug"
 database_url: "host=localhost dbname=apiCargoRest sslmode=disable"
 session_key: "dskadbsabdkabkdbakdbkasbdkja"
+base_path: "/api/v1"
 
 mail:
   host: "localhost"
@@ -11,3 +10,10 @@ mail:
   username: guest
   password: guest
   send_queue: mail
+
+db:
+  host: "localhost"
+  user: "rasha"
+  pass: ""
+  dbName: "apiCargoRest"
+  maxConnections: 100

@@ -10,10 +10,12 @@ require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/sessions v1.2.0
+	github.com/jackc/pgx v3.6.0+incompatible // indirect
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pty v1.1.8 // indirect
 	github.com/lib/pq v1.2.0
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271
 	github.com/stretchr/objx v0.2.0 // indirect
@@ -22,4 +24,6 @@ require (
 	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7 // indirect
 	golang.org/x/tools v0.0.0-20190823170909-c4a336ef6a2f // indirect
 	google.golang.org/appengine v1.6.5 // indirect
+	gopkg.in/jackc/pgx.v3 v3.6.0
+	gopkg.in/yaml.v3 v3.0.0-20191010095647-fc94e3f71652
 )

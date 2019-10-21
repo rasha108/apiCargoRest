@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
+
+	"github.com/rasha108/apiCargoRest.git/internal/app/db"
 
 	"github.com/sirupsen/logrus"
 
@@ -12,9 +13,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/db/sqlstore"
 
-	"github.com/jmoiron/sqlx"
-
-	"github.com/BurntSushi/toml"
 	"github.com/rasha108/apiCargoRest.git/internal/app/api"
 )
 
@@ -23,39 +21,52 @@ var (
 )
 
 func init() {
-	flag.StringVar(&configPath, "config-path", "configs/apiserver.toml", "path to config file")
+	flag.StringVar(&configPath, "config-path", "configs/config.yaml", "path to config file")
 }
 
 func main() {
 	flag.Parse()
 	logger := logrus.Logger{}
 
-	config := api.NewConfig()
-	_, err := toml.DecodeFile(configPath, config)
+	conf, err := api.GetConfig(configPath)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("get")
 	}
 
-	db, err := sqlx.Connect("postgres", config.DatabaseURL)
+	dbConfig := conf.DbConfig
+
+	connParams := db.NewConnectParams(
+		dbConfig.Host,
+		dbConfig.User,
+		dbConfig.Pass,
+		dbConfig.DbName,
+		dbConfig.Port,
+		dbConfig.MaxConnections,
+	)
+
+	connHandler, err := db.Connect(connParams, logger)
 	if err != nil {
-		logger.WithError(err).Error("db connect failed")
+		logger.WithError(err).Error("db conncet failed")
 		return
 	}
+	defer func() {
+		dbErr := db.Disconnect(connHandler, logger)
+		if dbErr != nil {
+			logger.WithError(err).Error("db disconncet failed")
+		}
+	}()
 
-	defer db.Close()
+	store := sqlstore.New(connHandler)
+	sessionStore := sessions.NewCookieStore([]byte(conf.SessionKey))
 
-	store := sqlstore.New(db)
-	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
-
-	mailServer, err := rabbitclient.NewConnection(config.MailConfig)
+	mailServer, err := rabbitclient.NewConnection(conf.MailConfig)
 	if err != nil {
 		logger.WithError(err).Error("create mail client failed")
 		return
 	}
 
-	srv := api.NewServer(store, sessionStore, mailServer)
-
-	err = http.ListenAndServe(config.BindAddr, srv)
+	srv := api.NewServer(store, sessionStore, conf, mailServer)
+	err = http.ListenAndServe(conf.BindAddr, srv)
 	if err != nil {
 		logger.WithError(err).Error("application aborted")
 		return

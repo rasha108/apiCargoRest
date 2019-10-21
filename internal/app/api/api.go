@@ -37,17 +37,17 @@ type server struct {
 	config       *Config
 	store        db.Store
 	sessionStore sessions.Store
-	mailConnect  *rabbitclient.Connection
+	mqConnection *rabbitclient.Connection
 }
 
-func NewServer(store db.Store, sessionStore sessions.Store, mailConnect *rabbitclient.Connection) *server {
+func NewServer(store db.Store, sessionStore sessions.Store, config *Config, mqConnection *rabbitclient.Connection) *server {
 	s := &server{
 		router:       chi.NewRouter(),
 		logger:       logrus.New(),
-		config:       NewConfig(),
+		config:       config,
 		store:        store,
 		sessionStore: sessionStore,
-		mailConnect:  mailConnect,
+		mqConnection: mqConnection,
 	}
 
 	s.configRouter()
