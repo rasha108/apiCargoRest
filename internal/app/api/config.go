@@ -9,13 +9,17 @@ import (
 )
 
 type Config struct {
-	BindAddr    string              `yaml:"bind_addr"`
-	LogLeval    string              `yaml:"log_level"`
-	DatabaseURL string              `yaml:"database_url"`
-	SessionKey  string              `yaml:"session_key"`
-	BasePath    string              `yaml:"base_path"`
-	MailConfig  rabbitclient.Config `yaml:"mail"`
-	DbConfig    DbConfig            `yaml:"db"`
+	LogLeval   string              `yaml:"log_level"`
+	SessionKey string              `yaml:"session_key"`
+	APIConfig  APIConfig           `yaml:"api"`
+	MailConfig rabbitclient.Config `yaml:"mail"`
+	DbConfig   DbConfig            `yaml:"db"`
+}
+
+// APIConfig stores api parameters
+type APIConfig struct {
+	Bind     string `yaml:"bind"`
+	BasePath string `yaml:"basePath"`
 }
 
 // DbConfig stores database connection parametrs

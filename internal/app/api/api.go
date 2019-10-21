@@ -62,7 +62,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *server) configRouter() {
 	router := s.router
 	conf := s.config
-	basePath := conf.BasePath
+	basePath := conf.APIConfig.BasePath
 	router.Route(basePath, func(scope chi.Router) {
 		scope.Use(s.setRequestID)
 		scope.Use(s.logRequest)

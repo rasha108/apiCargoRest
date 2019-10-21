@@ -1,8 +1,9 @@
-bind_addr: ":8084"
 log_level: "debug"
-database_url: "host=localhost dbname=apiCargoRest sslmode=disable"
 session_key: "dskadbsabdkabkdbakdbkasbdkja"
-base_path: "/api/v1"
+
+api:
+  bind: ":8084"
+  basePath: "/api/v1"
 
 mail:
   host: "localhost"
@@ -16,4 +17,5 @@ db:
   user: "rasha"
   pass: ""
   dbName: "apiCargoRest"
+  port: 5432
   maxConnections: 100
