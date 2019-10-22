@@ -6,14 +6,14 @@ api:
   basePath: "/api/v1"
 
 mail:
-  host: "localhost"
+  host: "cargo-mq"
   port: 5672
   username: guest
   password: guest
   send_queue: mail
 
 db:
-  host: "localhost"
+  host: "cargo-db"
   user: "rasha"
   pass: ""
   dbName: "apiCargoRest"

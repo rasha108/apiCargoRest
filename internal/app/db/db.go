@@ -39,9 +39,10 @@ func NewConnectParams(host, user, pass, dbName string, port, maxConnections int)
 
 // Connect creates database connection
 // returns wrapper connection type
-func Connect(params *ConnectParams, logger logrus.Logger) (*sqlx.DB, error) {
-	DSNtpl := "host=%s dbname=%s sslmode=disable"
+func Connect(params *ConnectParams, logger *logrus.Logger) (*sqlx.DB, error) {
+	DSNtpl := "user=%s host=%s dbname=%s sslmode=disable"
 	DSN := fmt.Sprintf(DSNtpl,
+		params.user,
 		params.host,
 		params.dbName,
 	)
@@ -67,7 +68,7 @@ func Connect(params *ConnectParams, logger logrus.Logger) (*sqlx.DB, error) {
 	return db, nil
 }
 
-func Disconnect(rawConn *sqlx.DB, logger logrus.Logger) error {
+func Disconnect(rawConn *sqlx.DB, logger *logrus.Logger) error {
 	logger.Tracef("disconnecting db")
 	err := rawConn.Close()
 	if err != nil {
