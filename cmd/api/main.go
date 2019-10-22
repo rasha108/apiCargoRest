@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net/http"
+	"os"
 
 	"github.com/rasha108/apiCargoRest.git/internal/app/db"
 
@@ -26,12 +27,18 @@ func init() {
 
 func main() {
 	flag.Parse()
-	logger := logrus.Logger{}
+
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.SetOutput(os.Stdout)
+	logger.SetLevel(logrus.DebugLevel)
 
 	conf, err := api.GetConfig(configPath)
 	if err != nil {
 		logger.Fatalf("get")
 	}
+
+	logger.Info("Start server...")
 
 	dbConfig := conf.DbConfig
 
@@ -46,13 +53,13 @@ func main() {
 
 	connHandler, err := db.Connect(connParams, logger)
 	if err != nil {
-		logger.WithError(err).Error("db conncet failed")
+		logger.WithError(err).Fatal("db connect failed")
 		return
 	}
 	defer func() {
 		dbErr := db.Disconnect(connHandler, logger)
 		if dbErr != nil {
-			logger.WithError(dbErr).Error("db disconncet failed")
+			logger.WithError(dbErr).Fatal("db disconnect failed")
 		}
 	}()
 
