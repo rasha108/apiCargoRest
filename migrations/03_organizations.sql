@@ -4,9 +4,9 @@
 -- object: public.users_organizations | type: TABLE --
 -- DROP TABLE IF EXISTS public.users_organizations CASCADE;
 CREATE TABLE public.users_organizations (
-	id uuid NOT NULL,
-	user_id uuid,
-	org_id uuid,
+	id bigserial NOT NULL,
+	user_id bigint,
+	org_id bigint,
 	CONSTRAINT users_organizations_user_id_org_id UNIQUE (user_id,org_id),
 	CONSTRAINT users_organizations_pk PRIMARY KEY (id)
 
@@ -16,7 +16,7 @@ CREATE TABLE public.users_organizations (
 -- object: public.organizations | type: TABLE --
 -- DROP TABLE IF EXISTS public.organizations CASCADE;
 CREATE TABLE public.organizations (
-	id uuid NOT NULL,
+	id bigserial NOT NULL,
 	org_name varchar(128),
 	phone varchar(64),
 	address varchar(256),
