@@ -1,0 +1,21 @@
+log_level: "debug"
+session_key: "dskadbsabdkabkdbakdbkasbdkja"
+
+api:
+  bind: ":8084"
+  basePath: "/api/v1"
+
+mail:
+  host: "cargo-mq"
+  port: 5672
+  username: guest
+  password: guest
+  send_queue: mail
+
+db:
+  host: "cargo-db"
+  user: "rasha"
+  pass: ""
+  dbName: "apiCargoRest"
+  port: 5432
+  maxConnections: 100

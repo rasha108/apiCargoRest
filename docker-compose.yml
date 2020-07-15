@@ -1,0 +1,95 @@
+version: '3.2'
+
+services:
+  # Rabbitmq
+  cargo-mq:
+    image: rabbitmq:management-alpine
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    restart: always
+    ports:
+      - "15672:15672"
+    expose:
+      - "5672"
+      - "15672"
+    depends_on:
+      - cargo-redis
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "2"
+
+  cargo-redis:
+    image: redis:alpine
+    restart: always
+    expose:
+      - "6379"
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "2"
+
+  # База данных
+  # note: имена сервисов соответствуют именам хостов внутри сети backend
+  cargo-db:
+    image: postgres:11-alpine
+    environment:
+      - POSTGRES_DB=apiCargoRest
+      - POSTGRES_USER=rasha
+    restart: always
+    # Чтобы после перезапусков данные сохранились, "мапим" директорию на диск на локалхосте
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    expose:
+      - "5432"
+    # Задаем опции логирования, чтобы не забить весь диск логами
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "2"
+
+  # Приложение
+  cargo-app:
+    build:
+      # Билдим из локального Dockerfile
+      context: .
+    # Название собранного образа
+    image: rasha/cargo_app:latest
+    ports:
+      - "8084:8084"
+    expose:
+      - "8084"
+    networks:
+      # backend - для общения с внутренними сервисами - базой, rabbitmq
+      - backend
+    depends_on:
+      - cargo-db
+      - cargo-mq
+    # Задаем опции логирования, чтобы не забить весь диск логами
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "2"
+
+# Определение тома pg_data
+volumes:
+  pg_data:
+    driver: local
+  rabbit_data:
+    driver: local
+
+# Определение сетей
+networks:
+  backend:
+    external:
+      name: backend

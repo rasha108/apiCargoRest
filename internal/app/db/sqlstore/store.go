@@ -3,7 +3,7 @@ package sqlstore
 import (
 	"github.com/jmoiron/sqlx"
 
-	"github.com/rasha108/apiCargoRest.git/internal/app/store"
+	"github.com/rasha108/apiCargoRest.git/internal/app/db"
 )
 
 type Store struct {
@@ -17,7 +17,7 @@ func New(db *sqlx.DB) *Store {
 	}
 }
 
-func (s *Store) User() store.UserRepository {
+func (s *Store) User() db.UserRepository {
 	if s.userRepository != nil {
 		return s.userRepository
 	}
