@@ -8,13 +8,12 @@ import (
 	"time"
 
 	"github.com/rasha108/apiCargoRest.git/internal/app/rabbitmq"
-
-	"github.com/google/uuid"
-
-	"github.com/go-chi/chi"
-	"github.com/gorilla/sessions"
 	"github.com/rasha108/apiCargoRest.git/internal/app/db"
 	"github.com/rasha108/apiCargoRest.git/internal/app/model"
+	
+	"github.com/google/uuid"
+	"github.com/go-chi/chi"
+	"github.com/gorilla/sessions"
 	logger "github.com/sirupsen/logrus"
 )
 
